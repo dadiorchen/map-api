@@ -1,0 +1,8 @@
+{
+  "realm": "quickstart",
+  "bearer-only": true,
+  "auth-server-url": "https://dev-k8s.treetracker.org/auth/",
+  "ssl-required": "external",
+  "resource": "node",
+  "confidential-port": 0
+}
