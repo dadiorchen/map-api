@@ -61,7 +61,9 @@ app.get('/public', async (req, res) => {
   }
 });
 
-app.get('/settings', keycloak.protect('realm:user'), (req, res) => res.status(200).json({ ok: true }));
+// app.get('/settings', keycloak.protect('realm:web-map-manager'), (req, res) => res.status(200).json({ ok: true }));
+
+app.get('/settings', keycloak.enforcer('web-map-global-setting:view'), (req, res) => res.status(200).json({ ok: true }));
 
 // Global error handler
 // app.use(errorHandler);
