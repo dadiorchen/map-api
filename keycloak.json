@@ -1,0 +1,8 @@
+{
+  "realm": "greenstand",
+  "bearer-only": true,
+  "auth-server-url": "https://dev-k8s.treetracker.org/auth/",
+  "ssl-required": "external",
+  "resource": "webmap-service",
+  "confidential-port": 0
+}
