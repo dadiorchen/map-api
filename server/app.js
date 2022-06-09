@@ -8,6 +8,8 @@ const HttpError = require('./utils/HttpError');
 // const { errorHandler } = require('./utils/utils');
 const { handlerWrapper } = require('./utils/utils');
 
+const knex = require('knex');
+
 const memoryStore = new session.MemoryStore();
 
 
@@ -64,6 +66,21 @@ app.get('/public', async (req, res) => {
 // app.get('/settings', keycloak.protect('realm:web-map-manager'), (req, res) => res.status(200).json({ ok: true }));
 
 app.get('/settings', keycloak.enforcer('web-map-global-setting:view'), (req, res) => res.status(200).json({ ok: true }));
+
+app.post('/organizations/:organization_id/theme', async (req, res) => {
+  const organization_id = req.params.organization_id;
+  const theme = req.body.theme;
+  // update database
+  try {
+    const result = await knex('theme')
+      .where('organization_id', organization_id)
+      .update({ theme });
+    res.status(200).json({ ok: true });
+  } catch (e) {
+    console.log("error:", e);
+    res.status(500).json({ error: 500, message: "get error when update" });
+  }
+})
 
 // Global error handler
 // app.use(errorHandler);
