@@ -72,7 +72,13 @@ app.post('/organizations/:organization_id/theme', async (req, res) => {
   const theme = req.body.theme;
   // update database
   try {
-    const result = await knex('theme')
+    // init knex with schema 'webmap' and connection to postgres database
+    const knex = require('knex')({
+      client: 'postgresql',
+      connection: process.env.DB_URL,
+      searchPath: 'public',
+    });
+    const result = await knex('map_config')
       .where('organization_id', organization_id)
       .update({ theme });
     res.status(200).json({ ok: true });
