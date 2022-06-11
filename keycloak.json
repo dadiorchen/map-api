@@ -3,6 +3,6 @@
   "bearer-only": true,
   "auth-server-url": "https://dev-k8s.treetracker.org/auth/",
   "ssl-required": "external",
-  "resource": "webmap-service",
+  "resource": "api-services",
   "confidential-port": 0
 }

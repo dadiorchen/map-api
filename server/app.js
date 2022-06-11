@@ -22,10 +22,10 @@ if (process.env.NODE_ENV === 'development') {
   app.use(cors());
 }
 
-// app.use(keycloak.middleware({
-//   logout: '/logout',
-//   admin: '/'
-// }));
+app.use(keycloak.middleware({
+  logout: '/logout',
+  admin: '/'
+}));
 
 /*
  * Check request
@@ -72,26 +72,28 @@ const knex = require('knex')({
   debug: true,
 });
 
-app.get('/organizations/:organization_id/theme', async (req, res) => {
-  const organization_id = req.params.organization_id;
-  const theme = req.body.theme;
-  // update database
-  try {
-    // select theme from database
-    const result = await knex('map_config')
-      .select('theme')
-      .where({ organization_id });
-    if (result.length === 0) {
-      res.status(404).json({
-        message: "not found",
-      });
+app.get('/organizations/:organization_id/theme',
+  keycloak.enforcer('web-map-theme:view'),
+  async (req, res) => {
+    const organization_id = req.params.organization_id;
+    const theme = req.body.theme;
+    // update database
+    try {
+      // select theme from database
+      const result = await knex('map_config')
+        .select('theme')
+        .where({ organization_id });
+      if (result.length === 0) {
+        res.status(404).json({
+          message: "not found",
+        });
+      }
+      res.status(200).json(result[0]);
+    } catch (e) {
+      console.log("error:", e);
+      res.status(500).json({ error: 500, message: "get error when select" });
     }
-    res.status(200).json(result[0]);
-  } catch (e) {
-    console.log("error:", e);
-    res.status(500).json({ error: 500, message: "get error when select" });
-  }
-})
+  })
 
 app.post('/organizations/:organization_id/theme', async (req, res) => {
   const organization_id = req.params.organization_id;
