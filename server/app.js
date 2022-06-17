@@ -1,3 +1,16 @@
+// const nock = require('nock');
+// const nockBack = require('nock').back;
+// nockBack.setMode('lockdown');
+// nock.recorder.rec({
+//   output_objects: true,
+// });
+const https = require('https');
+const request = https.request;
+https.request = (...args) => {
+  console.warn('https.request is called:', args);
+  console.error("mock https:");
+  return request(...args)
+};
 const express = require('express');
 const cors = require('cors');
 
@@ -73,7 +86,20 @@ const knex = require('knex')({
 });
 
 app.get('/organizations/:organization_id/theme',
-  keycloak.enforcer('web-map-theme:view'),
+  // keycloak.enforcer('web-map-theme:view'),
+  keycloak.enforcer(['web-map-theme:edit'],
+    // keycloak.enforcer(['web-map-theme-for-organization-n:view'],
+    {
+      claims: function (request) {
+        if (!request.params.organization_id) {
+          throw new Error("organization_id is required");
+        }
+        return {
+          custom: request.params.organization_id
+        }
+      }
+    }
+  ),
   async (req, res) => {
     const organization_id = req.params.organization_id;
     const theme = req.body.theme;
@@ -97,6 +123,17 @@ app.get('/organizations/:organization_id/theme',
 
 app.post('/organizations/:organization_id/theme',
   keycloak.enforcer('web-map-theme:edit'),
+  // keycloak.enforcer(['web-map-theme:edit'],
+  //   {
+  //     claims: function (request) {
+  //       if (!request.params.organization_id) {
+  //         throw new Error("organization_id is required");
+  //       }
+  //       return {
+  //         organization_id: [request.params.organization_id]
+  //       }
+  //     }
+  //   }),
   async (req, res) => {
     const organization_id = req.params.organization_id;
     console.warn("organization_id:", organization_id);
