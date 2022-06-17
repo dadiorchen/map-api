@@ -94,8 +94,10 @@ app.get('/organizations/:organization_id/theme',
         if (!request.params.organization_id) {
           throw new Error("organization_id is required");
         }
+        const custom = [request.params.organization_id];
+        console.warn("claim custom:", custom);
         return {
-          custom: request.params.organization_id
+          custom,
         }
       }
     }
